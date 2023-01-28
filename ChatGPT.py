@@ -15,6 +15,9 @@ class ChatGPT3:
         self.truncate_context()
 
     def get_prompt(self, prompt: str, use_context: bool = 1):
+        # THIS IS REALLY IMPORTANT
+        # Without this, it gets confused and starts responding to itself. This is not the best place to put this,
+        # this is where I have put it for now. Basically this sets up the two roles for it to know who is leading.
         prompt = "Prospect: " + prompt + "\nInterviewer: "
 
         # Generate a response
@@ -24,6 +27,8 @@ class ChatGPT3:
                 prompt="context:" + self.context + "prompt:" + prompt + "\n",
                 max_tokens=1024,
                 n=1,
+                # This is the other portion that is REALLY important. Without this it was getting confused.
+                # This tells it to stop talking when it reaches the prospective employee's dialog section.
                 stop=["Prospect:"],
                 temperature=0.5,
             )
