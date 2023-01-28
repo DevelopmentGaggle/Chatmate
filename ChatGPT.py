@@ -14,7 +14,11 @@ class ChatGPT3:
         self.context_limit = context_limit
         self.truncate_context()
 
-    def get_prompt(self, prompt: str, use_context: bool = 1):
+    def get_prompt(self, prompt: str, final_prompt: bool, use_context: bool = True):
+        # This helps the AI determine when it should end.
+        if final_prompt:
+            prompt = "This is my final answer. " + prompt
+
         # THIS IS REALLY IMPORTANT
         # Without this, it gets confused and starts responding to itself. This is not the best place to put this,
         # this is where I have put it for now. Basically this sets up the two roles for it to know who is leading.
@@ -60,11 +64,11 @@ chat_gpt3 = ChatGPT3(initial_context="""You are a senior computer engineer inter
 
 """)
 
-while True:
+for i in range(6):
     user_input = input()
     if user_input == "quit":
         break
-    print(chat_gpt3.get_prompt(user_input))
+    print(chat_gpt3.get_prompt(user_input, i > 3))
 
 
 
