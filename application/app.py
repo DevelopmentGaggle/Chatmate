@@ -55,6 +55,7 @@ class MainApp(MDApp):
 
     def toggle_mute(self):
         icon = self.root.ids.main_screen.ids.mute.icon
+        self.edit_msg('hi new msg')
         if icon == 'microphone':
             self.root.ids.main_screen.ids.mute.icon = 'microphone-off'
         else:
@@ -148,6 +149,9 @@ class MainApp(MDApp):
             radius=radius
         )
         self.root.ids.main_screen.ids.chatlist.add_widget(widget)
+
+    def edit_msg(self, text):
+        self.root.ids.main_screen.ids.chatlist.children[0].secondary_text = text
 
 if __name__ == "__main__":
     MainApp().run()
