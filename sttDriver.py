@@ -19,12 +19,15 @@ CHATGPT_MESSAGE = 0
 USER_MESSAGE_INTERIM = 1
 USER_MESSAGE_FINAL = 2
 
+
 def stt_driver_main(response_q, time_marker):
     transcription_q = queue.Queue()
     thread = Thread(target=speechToText.start_speech_to_text, args=(transcription_q, ))
     thread.start()
 
-    tc = ChatGPT.TimedConversation("Google", "Software Engineer", transitions=(1, 3, 4), difficulty=2)
+    tc = ChatGPT.TimedConversation(time_marker.company, time_marker.role,
+                                   transitions=(5/30 * float(time_marker.duration), 25/30 * float(time_marker.duration),
+                                   float(time_marker.duration)), difficulty=int(time_marker.difficulty))
 
     transaction = 0
 

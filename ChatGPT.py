@@ -26,28 +26,32 @@ class TimedConversation:
 
     def get_prompt(self, prompt: str, time):
         if time < self.transitions[0]:
-            if self.phase == 0:
+            print("SECTION 1 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            if self.phase <= 0:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
                 You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 You will ask several """ + self.difficulty + """ difficulty questions and I will respond to those questions.
                 The only exception to this will be during the introductions at the start of the mock interview where I introduce myself first.
     
                 """)
-                self.phase += 1
+                self.phase = 1
 
         elif time < self.transitions[1]:
-            if self.phase == 1:
+            print("SECTION 2 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            if self.phase <= 1:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
                 You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 Search for a """ + self.difficulty + """ LeetCode or HackerRank problem, and link it to me.
                 If I need help, please give me hints.
+                I may need to pause to think about the problem, so make sure I finished the last problem before giving me the next one.
                 Once I have finished the problem, continue giving me problems and links, while offering me hints if needed.
 
                 """)
-                self.phase += 1
+                self.phase = 2
 
         elif time < self.transitions[2]:
-            if self.phase == 2:
+            print("SECTION 3 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            if self.phase <= 2:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
                 You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 You will simulate the end of an interview right after you had given me some programming problems.
@@ -55,16 +59,17 @@ class TimedConversation:
                 and if you wanted to know anything else.
                 
                 """)
-                self.phase += 1
+                self.phase = 3
 
         else:
-            if self.phase == 3:
+            print("SECTION 4 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            if self.phase <= 3:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
                 You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 The interview has ended and you are saying good bye to me.
                 
                 """)
-                self.phase += 1
+                self.phase = 4
 
         return self.chat_gpt3.get_response(prompt)
 

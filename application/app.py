@@ -19,6 +19,10 @@ isTalking = False
 class TimerMarker:
     def __init__(self):
         self.time = 0
+        self.company = ""
+        self.role = ""
+        self.duration = ""
+        self.difficulty = ""
 
 
 time_marker = TimerMarker
@@ -66,6 +70,11 @@ class MainApp(MDApp):
         duration = duration_in
         global difficulty
         difficulty = difficulty_in
+        time_marker.company = company
+        time_marker.role = role
+        time_marker.duration = duration
+        time_marker.difficulty = difficulty
+
 
     def go_back_setup(self):
         self.root.ids.main_screen.ids.chatlist.clear_widgets()
