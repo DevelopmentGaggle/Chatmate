@@ -58,3 +58,32 @@ class ChatGPT3:
         if len(self.context) > self.context_limit:
             print("Warning, context limit exceeded, truncating input")
             self.context = self.context[self.context_limit - len(self.context):]
+
+class RankByQualifier:
+    def __init__(self, qualifier: str):
+        self.qualifier = qualifier
+
+        completion = openai.Completion.create(
+            engine=model_engine,
+            prompt="Tell me the opposite of the following sentence. " + qualifier + "\n",
+            max_tokens=1024,
+            n=1,
+            # This is the other portion that is REALLY important. Without this it was getting confused.
+            # This tells it to stop talking when it reaches the prospective employee's dialog section.
+            stop=None,
+            temperature=0.5,
+        )
+
+        self.anti_qualifier = completion.choices[0].text
+
+    def get_prompt(self, prompt: str):
+        completion = openai.Completion.create(
+            engine=model_engine,
+            prompt="Rank the sentiment of the following sentence from 1 (" + self.anti_qualifier + ") to 10 (" + self.qualifier + "). " + prompt + "\n",
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+
+        return completion.choices[0].text
