@@ -1,11 +1,11 @@
-HackMate - SwampHacks-23
+Chatmate - SwampHacks-23
 ====================
 
 Interview prep
 ---------------------
 
-## Essence Logo
-![Logo](logo.png)
+## Chatmate logo
+![Logo](logo/chatmate logo.png)
 
 Description!
 
