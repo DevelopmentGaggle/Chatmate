@@ -1,12 +1,16 @@
 ScreenManager:
     StartScreen:
+        id: start_screen
     MainScreen:
+        id: main_screen
 
 <StartScreen>:
     name: 'start'
+    id: 'start'
     MDScreen:
-
+        id:'screen start'
         MDCard:
+            id: 'card'
             size_hint: None, None
             size: 650, 800
             pos_hint: {'center_x': 0.5, 'center_y':0.5}
@@ -61,9 +65,32 @@ ScreenManager:
 
 <MainScreen>:
     name: 'main'
+    on_pre_enter: app.load_main()
     MDScreen:
-        md_bg_color: app.theme_cls.primary_light
-        MDScrollView:
-            MDList:
-                
+    
+        MDGridLayout:
+            cols: 1
+            padding: 5
+        
+            MDRectangleFlatIconButton:
+                on_press: app.go_back()
+                line_color: (0, 0, 0, 0)
+                text: 'Logout'
+                text_color: 'white'
+                halign: 'left'
+                font_size: 35
+                pos_hint: {'center_x': 0.5}
+                icon: 'keyboard-backspace'
+                size_hint_x: 1.0
+                bold: True
+
+            MDScrollView:
+                bar_color: 'white'
+                MDList:
+                    id: chatlist
+                    padding: ('5dp', '5dp', '5dp', '5dp')
+                    spacing: '5dp'
+                    radius: [25, 25, 25, 25]
+            
+
             
