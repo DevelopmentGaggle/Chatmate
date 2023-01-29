@@ -8,16 +8,73 @@ openai.api_key = API_KEY.api_key
 model_engine = "text-davinci-003"
 
 
-class ChatGPT3:
+class TimedConversation:
+    def __init__(self, company, transitions=(5, 10, 15), difficulty: int = 2):
+        self.transitions = transitions  # in minutes
+        self.phase = 0
+
+        if difficulty == 1:
+            self.difficulty = "easy"
+        elif difficulty == 2:
+            self.difficulty = "medium"
+        else:
+            self.difficulty = "hard"
+
+        self.company = company
+        self.chat_gpt3 = None
+
+    def get_prompt(self, prompt: str, time):
+        if time < self.transitions[0]:
+            if self.phase == 0:
+                self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
+                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                You will ask several """ + self.difficulty + """ questions and I will respond to those questions.
+                The only exception to this will be during the introductions at the start of the mock interview where I introduce myself first.
+    
+                """)
+                self.phase += 1
+
+        elif time < self.transitions[1]:
+            if self.phase == 1:
+                self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
+                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                Search for a """ + self.difficulty + """ LeetCode or HackerRank problem, and link it to me.
+                If I need help, please give me hints.
+                Once I have finished the problem, continue giving me problems and links, while offering me hints if needed.
+
+                """)
+                self.phase += 1
+
+        elif time < self.transitions[2]:
+            if self.phase == 2:
+                self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
+                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                You will simulate the end of an interview right after you had given me some programming problems.
+                You will ask if I have any questions about """ + self.company + """
+                and if you wanted to know anything else.
+                
+                """)
+                self.phase += 1
+
+        else:
+            if self.phase == 3:
+                self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
+                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                The interview has ended and you are saying good bye to me.
+                
+                """)
+                self.phase += 1
+
+        return self.chat_gpt3.get_response(prompt)
+
+
+class ChatGPT3Conversation:
     def __init__(self, initial_context: str = "", context_limit: int = 2000):
         self.context = initial_context
         self.context_limit = context_limit
         self.truncate_context()
 
-    def get_prompt(self, prompt: str, final_prompt: bool, use_context: bool = True):
-        # This helps the AI determine when it should end.
-        if final_prompt:
-            prompt = "This is my final answer. Do not ask me another question. " + prompt
+    def get_response(self, prompt: str, use_context: bool = True):
 
         # THIS IS REALLY IMPORTANT
         # Without this, it gets confused and starts responding to itself. This is not the best place to put this,
@@ -57,7 +114,8 @@ class ChatGPT3:
     def truncate_context(self):
         if len(self.context) > self.context_limit:
             print("Warning, context limit exceeded, truncating input")
-            self.context = self.context[self.context_limit - len(self.context):]
+            self.context = self.context[len(self.context) - self.context_limit:]
+
 
 class RankByQualifier:
     def __init__(self, qualifier: str):
@@ -87,3 +145,13 @@ class RankByQualifier:
         )
 
         return completion.choices[0].text
+
+
+tc = TimedConversation("Google")
+
+for i in range(16):
+    user_input = input()
+    if user_input == "quit":
+        break
+    print(tc.get_prompt(user_input, i))
+
