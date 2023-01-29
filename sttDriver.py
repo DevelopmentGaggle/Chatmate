@@ -16,6 +16,9 @@ RED = "\033[0;31m"
 GREEN = "\033[0;32m"
 YELLOW = "\033[0;33m"
 
+CHATGPT_MESSAGE = 0
+USER_MESSAGE_INTERIM = 1
+USER_MESSAGE_FINAL = 2
 
 def stt_driver_main(response_q):
     transcription_q = queue.Queue()
@@ -32,10 +35,10 @@ def stt_driver_main(response_q):
             sys.stdout.write(GREEN)
             sys.stdout.write("\r" + message[0] + "\n")
 
-            response_q.put([message[0], 1])
+            response_q.put([message[0], USER_MESSAGE_FINAL])
             response = tc.get_prompt(message[0], transaction > 3)
             print(response)
-            response_q.put([response, 0])
+            response_q.put([response, CHATGPT_MESSAGE])
 
             mp3_fp = BytesIO()
             tts = gTTS(text=response, lang='en')
@@ -46,6 +49,7 @@ def stt_driver_main(response_q):
             tts_thread = Thread(target=play, args=(song,))
             tts_thread.start()
             tts_thread.join()
+
             while not transcription_q.empty():
                 transcription_q.get()
 
@@ -53,6 +57,7 @@ def stt_driver_main(response_q):
         else:
             sys.stdout.write(RED)
             sys.stdout.write("\r" + message[0])
+            response_q.put([message[0], USER_MESSAGE_INTERIM])
 
 
 # rbq = RankByQualifier("Strong problem-solving and analytical skills")
