@@ -4,13 +4,15 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.list import TwoLineAvatarIconListItem, IconLeftWidget
 from kivy.properties import NumericProperty, StringProperty
-from datetime import timedelta
 from kivy.clock import Clock
 
 prompt = 'What type of interview would you like to prepare for?'
 CGPT = 'ChatGPT'
 
 class StartScreen(Screen):
+    pass
+
+class SetupScreen(Screen):
     pass
 
 class MainScreen(Screen):
@@ -30,18 +32,32 @@ class MainApp(MDApp):
         sm = Builder.load_file('app.kv')
         return sm
 
-    def session(self, name_in, api_key_in):
+    def setup_session(self, name_in, api_key_in):
         global name
         name = name_in
         global api_key 
         api_key = api_key_in
         if name == '' or api_key == '':
             return
-        self.root.current = 'main'
+        self.root.current = 'setup'
 
-    def go_back(self):
+    def launch_interview(self, company_in, role_in, duration_in, difficulty_in):
+        self.root.current = 'main'
+        global company
+        company = company_in
+        global role
+        role = role_in
+        global duration
+        duration = duration_in
+        global difficulty
+        difficulty = difficulty_in
+
+    def go_back_setup(self):
         self.root.ids.main_screen.ids.chatlist.clear_widgets()
         self.reset_stopwatch()
+        self.root.current = 'setup'
+
+    def go_back_start(self):
         self.root.current = 'start'
 
     def load_main(self):
