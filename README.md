@@ -1,11 +1,11 @@
 Chatmate - SwampHacks-23
 ====================
+<img src="logo/chatmate_logo.png" alt="drawing" width="600"/>
 
-Interview prep
+
+Interview Prep for Programmers Everywhere
 ---------------------
 
-## Chatmate logo
-![Logo](/logo/chatmate logo.png)
 
 Description!
 
