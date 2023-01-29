@@ -10,7 +10,7 @@ from gtts import gTTS
 from threading import Thread
 from pydub import AudioSegment
 from pydub.playback import play
-import application.app as app
+
 
 RED = "\033[0;31m"
 GREEN = "\033[0;32m"
@@ -25,7 +25,7 @@ def stt_driver_main(response_q):
     thread = Thread(target=speechToText.start_speech_to_text, args=(transcription_q,))
     thread.start()
 
-    tc = ChatGPT.TimedConversation("Google", "Software Engineer", transitions=(5, 10, 15))
+    tc = ChatGPT.TimedConversation("Google", "Software Engineer", transitions=(5, 10, 15), difficulty=2)
 
     transaction = 0
 
@@ -35,8 +35,9 @@ def stt_driver_main(response_q):
             sys.stdout.write(GREEN)
             sys.stdout.write("\r" + message[0] + "\n")
 
+
             response_q.put([message[0], USER_MESSAGE_FINAL])
-            response = tc.get_prompt(message[0], transaction > 3)
+            response = tc.get_prompt(message[0], app.current_time_in_minutes)
             print(response)
             response_q.put([response, CHATGPT_MESSAGE])
 

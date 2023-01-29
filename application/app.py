@@ -15,6 +15,7 @@ prompt = 'What type of interview would you like to prepare for?'
 CGPT = 'ChatGPT'
 response_q = queue.Queue()
 isTalking = False
+current_time_in_minutes = 0
 
 class StartScreen(Screen):
     pass
@@ -95,6 +96,8 @@ class MainApp(MDApp):
             minutes = '0' + minutes
 
         self.stopwatch_time = minutes + ":" + seconds + ":" + milliseconds
+        global current_time_in_minutes
+        current_time_in_minutes = minutes
 
     # Modify start_or_stop_stopwatch to look as follows
     def start_or_stop_stopwatch(self):
