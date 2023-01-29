@@ -1,28 +1,92 @@
 ScreenManager:
     StartScreen:
         id: start_screen
+    SetupScreen:
+        id: setup_screen
     MainScreen:
         id: main_screen
 
 <StartScreen>:
     name: 'start'
-    id: 'start'
-    
-    MDScreen:
+
+    MDCard:
+        size_hint: None, None
+        size: 650, 800
+        pos_hint: {'center_x': 0.5, 'center_y':0.5}
+        elevation: 2
+        padding: 25
+        spacing: 25
+        orientation: 'vertical'
+        md_bg_color: app.theme_cls.primary_dark
+
+        MDLabel:
+            text: 'Welcome to Chatmate'
+            halign: 'center'
+            size_hint_y: None
+            height: self.texture_size[1]
+            padding_y: 15
+            color: 'white'
+            font_style: 'H2'
+            font_size: 80
+            bold: True
+
+        MDTextField:
+            id: name
+            hint_text: 'Name'
+            icon_left: 'account'
+            size_hint_x: None
+            width: 450
+            font_size: 40
+            pos_hint: {'center_x': 0.5}
+
+        MDTextField:
+            id: api_key
+            hint_text: 'ChatGPT API Key'
+            icon_left: 'account-key'
+            size_hint_x: None
+            width: 450
+            font_size: 40
+            pos_hint: {'center_x': 0.5}
+
+        MDRoundFlatButton:
+            text: 'Start Session'
+            text_color: 'white'
+            line_color: 'white'
+            line_width: 3
+            font_size: 35
+            pos_hint: {'center_x': 0.5}
+            on_press: app.setup_session(name.text, api_key.text)
+
+        Widget: 
+            size_hint_y: None
+            height: 30
+
+<SetupScreen>:
+    name: 'setup'
+
+    MDGridLayout:
+        cols: 1
+
+        MDRectangleFlatIconButton:
+            on_press: app.go_back_start()
+            line_color: (0, 0, 0, 0)
+            text: 'Logout'
+            text_color: 'white'
+            halign: 'left'
+            font_size: 35
+            pos_hint: {'center_x': 0.5}
+            icon: 'keyboard-backspace'
+            size_hint_x: 1.0
+            bold: True
 
         MDCard:
-            size_hint: None, None
-            size: 650, 800
-            pos_hint: {'center_x': 0.5, 'center_y':0.5}
-            elevation: 2
-            padding: 25
-            spacing: 25
+            padding: 30
+            spacing: 30
             orientation: 'vertical'
             md_bg_color: app.theme_cls.primary_dark
 
             MDLabel:
-                id: welcome
-                text: 'Welcome to Chatmate'
+                text: 'Setup Your Interview:'
                 halign: 'center'
                 size_hint_y: None
                 height: self.texture_size[1]
@@ -33,105 +97,125 @@ ScreenManager:
                 bold: True
 
             MDTextField:
-                id: name
-                hint_text: 'Name'
-                icon_left: 'account'
+                id: company
+                text: 'Google'
+                hint_text: 'Company'
+                icon_left: 'office-building'
                 size_hint_x: None
-                width: 450
+                width: 550
                 font_size: 40
                 pos_hint: {'center_x': 0.5}
 
             MDTextField:
-                id: api_key
-                hint_text: 'ChatGPT API Key'
-                icon_left: 'account-key'
+                id: role
+                text: 'Software Engineer'
+                hint_text: 'Role'
+                icon_left: 'account-supervisor'
                 size_hint_x: None
-                width: 450
+                width: 550
+                font_size: 40
+                pos_hint: {'center_x': 0.5}
+
+            MDTextField:
+                id: duration
+                text: '30'
+                hint_text: 'Interview Duration (minutes)'
+                icon_left: 'clock-time-eight'
+                size_hint_x: None
+                width: 550
+                font_size: 40
+                pos_hint: {'center_x': 0.5}
+
+            MDTextField:
+                id: difficulty
+                text: '2'
+                hint_text: 'Interview Difficulty (1, 2, or 3)'
+                icon_left: 'hard-hat'
+                size_hint_x: None
+                width: 550
                 font_size: 40
                 pos_hint: {'center_x': 0.5}
 
             MDRoundFlatButton:
-                text: 'Start Session'
+                text: 'Start Interview'
                 text_color: 'white'
                 line_color: 'white'
                 line_width: 3
-                font_size: 35
+                font_size: 40
                 pos_hint: {'center_x': 0.5}
-                on_press: app.session(name.text, api_key.text)
+                on_press: app.launch_interview(company.text, role.text, duration.text, difficulty.text)
 
             Widget: 
                 size_hint_y: None
-                height: 30
+                height: 80
 
 <MainScreen>:
     name: 'main'
     on_pre_enter: app.load_main()
 
-    MDScreen:
+    MDGridLayout:
+        cols: 1
 
-        MDGridLayout:
-            cols: 1
-
-            MDRectangleFlatIconButton:
-                on_press: app.go_back()
-                line_color: (0, 0, 0, 0)
-                text: 'Logout'
-                text_color: 'white'
-                halign: 'left'
-                font_size: 35
-                pos_hint: {'center_x': 0.5}
-                icon: 'keyboard-backspace'
-                size_hint_x: 1.0
-                bold: True
+        MDRectangleFlatIconButton:
+            on_press: app.go_back_setup()
+            line_color: (0, 0, 0, 0)
+            text: 'Leave Interview'
+            text_color: 'white'
+            halign: 'left'
+            font_size: 35
+            pos_hint: {'center_x': 0.5}
+            icon: 'keyboard-backspace'
+            size_hint_x: 1.0
+            bold: True
         
-            MDGridLayout:
-                cols: 2
-                padding: 5
+        MDGridLayout:
+            cols: 2
+            padding: 5
 
-                MDCard:
-                    size_hint_x: 0.25
-                    md_bg_color: app.theme_cls.primary_light
-                    orientation: 'vertical'
-                    spacing: 10
+            MDCard:
+                size_hint_x: 0.25
+                md_bg_color: app.theme_cls.primary_light
+                orientation: 'vertical'
+                spacing: 10
 
-                    # microphone icon
-                    MDIconButton:
-                        id: mute
-                        icon: 'microphone'
-                        pos_hint: {'center_x': 0.5}
-                        icon_size: 100
-                        theme_icon_color: "Custom"
-                        icon_color: 'black'
-                        on_press: app.toggle_mute()
+                MDIconButton:
+                    id: mute
+                    icon: 'microphone'
+                    pos_hint: {'center_x': 0.5}
+                    icon_size: 100
+                    theme_icon_color: "Custom"
+                    icon_color: 'black'
+                    on_press: app.toggle_mute()
 
-                    MDLabel:
-                        id: stopwatch_lbl
-                        text: app.stopwatch_time
-                        halign: 'center'
-                        theme_text_color: "Custom"
-                        text_color: 1, 1, 1, 1
-                        font_size: 50
+                MDLabel:
+                    id: stopwatch_lbl
+                    text: app.stopwatch_time
+                    halign: 'center'
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    font_size: 50
 
-                    # time stamp of interview 
-                    MDIconButton:
-                        id: play_pause_btn
-                        icon_size: 80
-                        icon: 'play'
-                        pos_hint: {'center_x': .5}
-                        on_press: app.start_or_stop_stopwatch()
+                MDIconButton:
+                    id: play_pause_btn
+                    icon_size: 80
+                    icon: 'play'
+                    pos_hint: {'center_x': .5}
+                    on_press: app.start_or_stop_stopwatch()
 
                     # analytics 
+                Widget:
+                    size_hint_y: None
+                    height: 700
 
-                MDGridLayout:
-                    cols: 1
-                    padding: 5
+            MDGridLayout:
+                cols: 1
+                padding: 5
 
-                    MDScrollView:
-                        bar_color: 'white'
-                        MDList:
-                            id: chatlist
-                            padding: ('5dp', '5dp', '5dp', '5dp')
-                            spacing: '5dp'
-            
+                MDScrollView:
+                    bar_color: 'white'
 
-            
+                    MDList:
+                        id: chatlist
+                        padding: ('5dp', '5dp', '5dp', '5dp')
+                        spacing: '5dp'
+    
