@@ -34,10 +34,6 @@ class MainApp(MDApp):
         self.theme_cls.primary_palette = "BlueGray"
         sm = Builder.load_file('app.kv')
 
-        tts_thread = Thread(target=sttDriver.stt_driver_main, args=(response_q,))
-        tts_thread.start()
-
-        Clock.schedule_interval(self.my_callback, 1 / 30.)
         return sm
 
     def session(self, name_in, api_key_in):
@@ -62,6 +58,11 @@ class MainApp(MDApp):
             self.add_msg(name, 'temp')
         self.stopwatch_time = "00:00:00"
         self.start_or_stop_stopwatch()
+
+        tts_thread = Thread(target=sttDriver.stt_driver_main, args=(response_q,))
+        tts_thread.start()
+
+        Clock.schedule_interval(self.my_callback, 1 / 30.)
 
     def toggle_mute(self):
         icon = self.root.ids.main_screen.ids.mute.icon

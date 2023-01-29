@@ -146,12 +146,3 @@ class RankByQualifier:
 
         return completion.choices[0].text
 
-
-tc = TimedConversation("Google")
-
-for i in range(16):
-    user_input = input()
-    if user_input == "quit":
-        break
-    print(tc.get_prompt(user_input, i))
-

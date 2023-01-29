@@ -22,9 +22,7 @@ def stt_driver_main(response_q):
     thread = Thread(target=speechToText.start_speech_to_text, args=(transcription_q,))
     thread.start()
 
-    chat_gpt3 = ChatGPT.ChatGPT3(initial_context="""You are a senior computer engineer interviewing me for a position at your company, Google. You will ask several questions and I will respond to those questions until you initiate the end of the interview after four or so questions. The only exception to this will be during the intrpductions at the start of the mock interview where I introduce myself first
-
-    """)
+    tc = ChatGPT.TimedConversation("Google", transitions=(5, 10, 15))
 
     transaction = 0
 
@@ -35,7 +33,7 @@ def stt_driver_main(response_q):
             sys.stdout.write("\r" + message[0] + "\n")
 
             response_q.put([message[0], 1])
-            response = chat_gpt3.get_prompt(message[0], transaction > 3)
+            response = tc.get_prompt(message[0], transaction > 3)
             print(response)
             response_q.put([response, 0])
 
