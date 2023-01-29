@@ -17,7 +17,7 @@ class ChatGPT3:
     def get_prompt(self, prompt: str, final_prompt: bool, use_context: bool = True):
         # This helps the AI determine when it should end.
         if final_prompt:
-            prompt = "This is my final answer. " + prompt
+            prompt = "This is my final answer. Do not ask me another question. " + prompt
 
         # THIS IS REALLY IMPORTANT
         # Without this, it gets confused and starts responding to itself. This is not the best place to put this,
@@ -58,19 +58,3 @@ class ChatGPT3:
         if len(self.context) > self.context_limit:
             print("Warning, context limit exceeded, truncating input")
             self.context = self.context[self.context_limit - len(self.context):]
-
-
-chat_gpt3 = ChatGPT3(initial_context="""You are a senior computer engineer interviewing me for a position at your company, Google. You will ask several questions and I will respond to those questions until you initiate the end of the interview after four or so questions. The only exception to this will be during the intrpductions at the start of the mock interview where I introduce myself first
-
-""")
-
-for i in range(6):
-    user_input = input()
-    if user_input == "quit":
-        break
-    print(chat_gpt3.get_prompt(user_input, i > 3))
-
-
-
-
-

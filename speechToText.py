@@ -212,11 +212,11 @@ def listen_print_loop(responses, stream, transcription):
 
             # Exit recognition if any of the transcribed phrases could be
             # one of our keywords.
-            if re.search(r"\b(exit|quit)\b", transcript, re.I):
-                sys.stdout.write(YELLOW)
-                sys.stdout.write("Exiting...\n")
-                stream.closed = True
-                break
+            #if re.search(r"\b(exit|quit)\b", transcript, re.I):
+            #    sys.stdout.write(YELLOW)
+            #    sys.stdout.write("Exiting...\n")
+            #    stream.closed = True
+            #    break
 
         else:
             #sys.stdout.write(RED)
