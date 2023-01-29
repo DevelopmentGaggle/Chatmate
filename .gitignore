@@ -2,3 +2,4 @@ venv/
 .idea/
 API_KEY.py
 Example.py
+test.py

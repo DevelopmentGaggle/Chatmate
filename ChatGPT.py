@@ -60,6 +60,44 @@ class ChatGPT3:
             self.context = self.context[self.context_limit - len(self.context):]
 
 
+class RankByQualifier:
+    def __init__(self, qualifier: str):
+        self.qualifier = qualifier
+
+        completion = openai.Completion.create(
+            engine=model_engine,
+            prompt="Tell me the opposite of the following sentence. " + qualifier + "\n",
+            max_tokens=1024,
+            n=1,
+            # This is the other portion that is REALLY important. Without this it was getting confused.
+            # This tells it to stop talking when it reaches the prospective employee's dialog section.
+            stop=None,
+            temperature=0.5,
+        )
+
+        self.anti_qualifier = completion.choices[0].text
+
+    def get_prompt(self, prompt: str):
+        completion = openai.Completion.create(
+            engine=model_engine,
+            prompt="Rank the sentiment of the following sentence from 1 (" + self.anti_qualifier + ") to 10 (" + self.qualifier + "). " + prompt + "\n",
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+
+        return completion.choices[0].text
+
+
+# rbq = RankByQualifier("Strong problem-solving and analytical skills")
+# rbq = RankByQualifier("motivated")
+# rbq = RankByQualifier("confident and commanding")
+rbq = RankByQualifier("positive")
+print("Bad: " + rbq.get_prompt("I was unfortunately unable to meet the deadline. My VHDL code also never worked."))
+print("Good: " + rbq.get_prompt("I was unfortunately unable to meet the deadline. Despite this, I worked with my managers to develop a plan to recover from this and was able to meet the second milestone in advance of the deadline!"))
+
+
 chat_gpt3 = ChatGPT3(initial_context="""You are a senior computer engineer interviewing me for a position at your company, Google. You will ask several questions and I will respond to those questions until you initiate the end of the interview after four or so questions. The only exception to this will be during the intrpductions at the start of the mock interview where I introduce myself first
 
 """)
