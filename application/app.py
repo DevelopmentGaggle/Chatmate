@@ -1,6 +1,10 @@
 import kivy
+import sttDriver
+import queue
+from threading import Thread
 from kivymd.app import MDApp
 from kivy.lang import Builder
+from kivy.clock import Clock
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.list import TwoLineAvatarIconListItem, IconLeftWidget
 from kivy.properties import NumericProperty, StringProperty
@@ -9,6 +13,7 @@ from kivy.clock import Clock
 
 prompt = 'What type of interview would you like to prepare for?'
 CGPT = 'ChatGPT'
+response_q = queue.Queue()
 
 class StartScreen(Screen):
     pass
@@ -28,6 +33,11 @@ class MainApp(MDApp):
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "BlueGray"
         sm = Builder.load_file('app.kv')
+
+        tts_thread = Thread(target=sttDriver.stt_driver_main, args=(response_q,))
+        tts_thread.start()
+
+        Clock.schedule_interval(self.my_callback, 1 / 30.)
         return sm
 
     def session(self, name_in, api_key_in):
@@ -46,7 +56,7 @@ class MainApp(MDApp):
 
     def load_main(self):
         if len(self.root.ids.main_screen.ids.chatlist.children) == 0:
-            file = open("./application/storage/transcript.txt", 'w')
+            file = open("./storage/transcript.txt", 'w')
             file.write(CGPT + ': ' + prompt)
             self.add_msg(CGPT, prompt)
             self.add_msg(name, 'temp')
@@ -55,6 +65,7 @@ class MainApp(MDApp):
 
     def toggle_mute(self):
         icon = self.root.ids.main_screen.ids.mute.icon
+        self.edit_msg('hi new msg')
         if icon == 'microphone':
             self.root.ids.main_screen.ids.mute.icon = 'microphone-off'
         else:
@@ -148,6 +159,18 @@ class MainApp(MDApp):
             radius=radius
         )
         self.root.ids.main_screen.ids.chatlist.add_widget(widget)
+
+    def my_callback(self, soup):
+        if not response_q.empty():
+            response = response_q.get()
+            if response[1]:
+                self.add_msg(self.name, response[0])
+            else:
+                self.add_msg(CGPT, response[0])
+
+    def edit_msg(self, text):
+        self.root.ids.main_screen.ids.chatlist.children[0].secondary_text = text
+
 
 if __name__ == "__main__":
     MainApp().run()
