@@ -14,6 +14,7 @@ from kivy.clock import Clock
 prompt = 'What type of interview would you like to prepare for?'
 CGPT = 'ChatGPT'
 response_q = queue.Queue()
+isTalking = False
 
 class StartScreen(Screen):
     pass
@@ -162,12 +163,23 @@ class MainApp(MDApp):
         self.root.ids.main_screen.ids.chatlist.add_widget(widget)
 
     def my_callback(self, soup):
+        global isTalking
         if not response_q.empty():
             response = response_q.get()
-            if response[1]:
-                self.add_msg(self.name, response[0])
-            else:
+            print(CGPT)
+            print(super)
+            if response[1] == sttDriver.CHATGPT_MESSAGE:
                 self.add_msg(CGPT, response[0])
+            elif response[1] == sttDriver.USER_MESSAGE_FINAL:
+                isTalking = False
+
+                self.edit_msg(response[0])
+            else:
+                if not isTalking:
+                    isTalking = True
+                    self.add_msg(name, response[0])
+                else:
+                    self.edit_msg(response[0])
 
     def edit_msg(self, text):
         self.root.ids.main_screen.ids.chatlist.children[0].secondary_text = text
