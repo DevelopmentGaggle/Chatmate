@@ -9,7 +9,7 @@ model_engine = "text-davinci-003"
 
 
 class TimedConversation:
-    def __init__(self, company, transitions=(5, 10, 15), difficulty: int = 2):
+    def __init__(self, company, role, transitions=(3, 5, 7), difficulty: int = 2):
         self.transitions = transitions  # in minutes
         self.phase = 0
 
@@ -21,14 +21,15 @@ class TimedConversation:
             self.difficulty = "hard"
 
         self.company = company
+        self.role = role
         self.chat_gpt3 = None
 
     def get_prompt(self, prompt: str, time):
         if time < self.transitions[0]:
             if self.phase == 0:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
-                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
-                You will ask several """ + self.difficulty + """ questions and I will respond to those questions.
+                You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
+                You will ask several """ + self.difficulty + """ difficulty questions and I will respond to those questions.
                 The only exception to this will be during the introductions at the start of the mock interview where I introduce myself first.
     
                 """)
@@ -37,7 +38,7 @@ class TimedConversation:
         elif time < self.transitions[1]:
             if self.phase == 1:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
-                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 Search for a """ + self.difficulty + """ LeetCode or HackerRank problem, and link it to me.
                 If I need help, please give me hints.
                 Once I have finished the problem, continue giving me problems and links, while offering me hints if needed.
@@ -48,7 +49,7 @@ class TimedConversation:
         elif time < self.transitions[2]:
             if self.phase == 2:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
-                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 You will simulate the end of an interview right after you had given me some programming problems.
                 You will ask if I have any questions about """ + self.company + """
                 and if you wanted to know anything else.
@@ -59,7 +60,7 @@ class TimedConversation:
         else:
             if self.phase == 3:
                 self.chat_gpt3 = ChatGPT3Conversation(initial_context="""
-                You are a senior computer engineer called Ella interviewing me for a position at your company, """ + self.company + """.
+                You are a senior """ + self.role + """ called Ella interviewing me for a """ + self.role + """ position at your company, """ + self.company + """.
                 The interview has ended and you are saying good bye to me.
                 
                 """)
@@ -145,4 +146,3 @@ class RankByQualifier:
         )
 
         return completion.choices[0].text
-

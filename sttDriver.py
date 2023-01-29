@@ -22,7 +22,7 @@ def stt_driver_main(response_q):
     thread = Thread(target=speechToText.start_speech_to_text, args=(transcription_q,))
     thread.start()
 
-    tc = ChatGPT.TimedConversation("Google", transitions=(5, 10, 15))
+    tc = ChatGPT.TimedConversation("Google", "Software Engineer", transitions=(5, 10, 15))
 
     transaction = 0
 
