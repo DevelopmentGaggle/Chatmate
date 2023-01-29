@@ -326,13 +326,6 @@ class _Example(App):
                 bar.value += 1
             else:
                 bar.value = bar.min
-        #
-        # # Showcase that setting the values using value_normalized property also works
-        # bar = self.root.children[-1]
-        # if bar.value < bar.max:
-        #     bar.value_normalized += 0.01
-        # else:
-        #     bar.value_normalized = 0
 
     # Simple layout for easy example
     def build(self):
@@ -356,3 +349,4 @@ FloatLayout:
 
 if __name__ == '__main__':
     _Example().run()
+
