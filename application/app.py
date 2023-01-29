@@ -15,7 +15,15 @@ prompt = 'What type of interview would you like to prepare for?'
 CGPT = 'ChatGPT'
 response_q = queue.Queue()
 isTalking = False
-current_time_in_minutes = 0
+
+
+class TimerMarker:
+    def __init__(self):
+        self.time = 0
+
+
+time_marker = TimerMarker
+
 
 class StartScreen(Screen):
     pass
@@ -24,7 +32,6 @@ class MainScreen(Screen):
     pass
 
 class MainApp(MDApp):
-
     stopwatch_time = StringProperty()
     milliseconds = NumericProperty()
     seconds = NumericProperty()
@@ -61,7 +68,9 @@ class MainApp(MDApp):
         self.stopwatch_time = "00:00:00"
         self.start_or_stop_stopwatch()
 
-        tts_thread = Thread(target=sttDriver.stt_driver_main, args=(response_q,))
+        global time_marker
+
+        tts_thread = Thread(target=sttDriver.stt_driver_main, args=(response_q, time_marker, ))
         tts_thread.start()
 
         Clock.schedule_interval(self.my_callback, 1 / 30.)
@@ -82,6 +91,9 @@ class MainApp(MDApp):
         """Function to increment milliseconds and convert the time elapsed to string format to which the label is set"""
         self.increment_milliseconds()
 
+        global time_marker
+        time_marker.time = self.minutes
+
         milliseconds = str(self.milliseconds)
         seconds = str(self.seconds)
         minutes = str(self.minutes)
@@ -96,8 +108,6 @@ class MainApp(MDApp):
             minutes = '0' + minutes
 
         self.stopwatch_time = minutes + ":" + seconds + ":" + milliseconds
-        global current_time_in_minutes
-        current_time_in_minutes = minutes
 
     # Modify start_or_stop_stopwatch to look as follows
     def start_or_stop_stopwatch(self):

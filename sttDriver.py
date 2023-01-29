@@ -20,12 +20,12 @@ CHATGPT_MESSAGE = 0
 USER_MESSAGE_INTERIM = 1
 USER_MESSAGE_FINAL = 2
 
-def stt_driver_main(response_q):
+def stt_driver_main(response_q, time_marker):
     transcription_q = queue.Queue()
-    thread = Thread(target=speechToText.start_speech_to_text, args=(transcription_q,))
+    thread = Thread(target=speechToText.start_speech_to_text, args=(transcription_q, ))
     thread.start()
 
-    tc = ChatGPT.TimedConversation("Google", "Software Engineer", transitions=(5, 10, 15), difficulty=2)
+    tc = ChatGPT.TimedConversation("Google", "Software Engineer", transitions=(1, 3, 4), difficulty=2)
 
     transaction = 0
 
@@ -35,10 +35,9 @@ def stt_driver_main(response_q):
             sys.stdout.write(GREEN)
             sys.stdout.write("\r" + message[0] + "\n")
 
-
             response_q.put([message[0], USER_MESSAGE_FINAL])
-            response = tc.get_prompt(message[0], app.current_time_in_minutes)
-            print(response)
+            print(time_marker.time)
+            response = tc.get_prompt(message[0], time_marker.time)
             response_q.put([response, CHATGPT_MESSAGE])
 
             mp3_fp = BytesIO()
