@@ -7,10 +7,10 @@ ScreenManager:
 <StartScreen>:
     name: 'start'
     id: 'start'
+    
     MDScreen:
-        id:'screen start'
+
         MDCard:
-            id: 'card'
             size_hint: None, None
             size: 650, 800
             pos_hint: {'center_x': 0.5, 'center_y':0.5}
@@ -66,12 +66,12 @@ ScreenManager:
 <MainScreen>:
     name: 'main'
     on_pre_enter: app.load_main()
+
     MDScreen:
-    
+
         MDGridLayout:
             cols: 1
-            padding: 5
-        
+
             MDRectangleFlatIconButton:
                 on_press: app.go_back()
                 line_color: (0, 0, 0, 0)
@@ -83,14 +83,55 @@ ScreenManager:
                 icon: 'keyboard-backspace'
                 size_hint_x: 1.0
                 bold: True
+        
+            MDGridLayout:
+                cols: 2
+                padding: 5
 
-            MDScrollView:
-                bar_color: 'white'
-                MDList:
-                    id: chatlist
-                    padding: ('5dp', '5dp', '5dp', '5dp')
-                    spacing: '5dp'
-                    radius: [25, 25, 25, 25]
+                MDCard:
+                    size_hint_x: 0.25
+                    md_bg_color: app.theme_cls.primary_light
+                    orientation: 'vertical'
+                    spacing: 10
+
+                    # microphone icon
+                    MDIconButton:
+                        id: mute
+                        icon: 'microphone'
+                        pos_hint: {'center_x': 0.5}
+                        icon_size: 100
+                        theme_icon_color: "Custom"
+                        icon_color: 'black'
+                        on_press: app.toggle_mute()
+
+                    MDLabel:
+                        id: stopwatch_lbl
+                        text: app.stopwatch_time
+                        halign: 'center'
+                        theme_text_color: "Custom"
+                        text_color: 1, 1, 1, 1
+                        font_size: 50
+
+                    # time stamp of interview 
+                    MDIconButton:
+                        id: play_pause_btn
+                        icon_size: 80
+                        icon: 'play'
+                        pos_hint: {'center_x': .5}
+                        on_press: app.start_or_stop_stopwatch()
+
+                    # analytics 
+
+                MDGridLayout:
+                    cols: 1
+                    padding: 5
+
+                    MDScrollView:
+                        bar_color: 'white'
+                        MDList:
+                            id: chatlist
+                            padding: ('5dp', '5dp', '5dp', '5dp')
+                            spacing: '5dp'
             
 
             

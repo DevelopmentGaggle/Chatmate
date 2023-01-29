@@ -3,6 +3,9 @@ from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.list import TwoLineAvatarIconListItem, IconLeftWidget
+from kivy.properties import NumericProperty, StringProperty
+from datetime import timedelta
+from kivy.clock import Clock
 
 prompt = 'What type of interview would you like to prepare for?'
 CGPT = 'ChatGPT'
@@ -14,6 +17,13 @@ class MainScreen(Screen):
     pass
 
 class MainApp(MDApp):
+
+    stopwatch_time = StringProperty()
+    milliseconds = NumericProperty()
+    seconds = NumericProperty()
+    minutes = NumericProperty()
+    watch_started = False
+
     def build(self):
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "BlueGray"
@@ -25,12 +35,13 @@ class MainApp(MDApp):
         name = name_in
         global api_key 
         api_key = api_key_in
-        if name == '':
+        if name == '' or api_key == '':
             return
         self.root.current = 'main'
 
     def go_back(self):
         self.root.ids.main_screen.ids.chatlist.clear_widgets()
+        self.reset_stopwatch()
         self.root.current = 'start'
 
     def load_main(self):
@@ -39,7 +50,85 @@ class MainApp(MDApp):
             file.write(CGPT + ': ' + prompt)
             self.add_msg(CGPT, prompt)
             self.add_msg(name, 'temp')
+        self.stopwatch_time = "00:00:00"
+        self.start_or_stop_stopwatch()
 
+    def toggle_mute(self):
+        icon = self.root.ids.main_screen.ids.mute.icon
+        if icon == 'microphone':
+            self.root.ids.main_screen.ids.mute.icon = 'microphone-off'
+        else:
+            self.root.ids.main_screen.ids.mute.icon = 'microphone'
+
+    def start_or_stop_stopwatch(self):
+        pass
+
+    # add this function
+    def get_string_time(self, dt):
+        """Function to increment milliseconds and convert the time elapsed to string format to which the label is set"""
+        self.increment_milliseconds()
+
+        milliseconds = str(self.milliseconds)
+        seconds = str(self.seconds)
+        minutes = str(self.minutes)
+
+        if len(milliseconds) < 2:
+            milliseconds = '0' + milliseconds
+
+        if len(seconds) < 2:
+            seconds = '0' + seconds
+
+        if len(minutes) < 2:
+            minutes = '0' + minutes
+
+        self.stopwatch_time = minutes + ":" + seconds + ":" + milliseconds
+
+    # Modify start_or_stop_stopwatch to look as follows
+    def start_or_stop_stopwatch(self):
+        """Function to stop the stopwatch if it is not running otherwise stop it"""
+        if self.watch_started:
+            self.watch_started = False
+            self.root.ids.main_screen.ids['play_pause_btn'].icon = 'play'
+            Clock.unschedule(self.get_string_time) # Unschedule the get_string_time function
+        else:
+            self.watch_started = True
+            self.root.ids.main_screen.ids['play_pause_btn'].icon = 'pause'
+            Clock.schedule_interval(self.get_string_time, 0.1) # schedule the get_string_time function to run every 10ms
+
+    # add the following function
+    def increment_milliseconds(self):
+        """Increment the milliseconds by 10ms"""
+        self.milliseconds += 10
+
+        if self.milliseconds == 100:
+            self.increment_seconds()
+            self.milliseconds = 0
+
+    # add the following function
+    def increment_seconds(self):
+        """Increment the seconds by 1 second"""
+        self.seconds += 1
+
+        if self.seconds == 60:
+            self.increment_minutes()
+            self.seconds = 0
+
+    # add the following function
+    def increment_minutes(self):
+        """Increment the minutes by 1 minute"""
+        self.minutes += 1
+
+    def reset_stopwatch(self):
+        """Set the stopwatch to 00:00:00"""
+        if self.watch_started:
+            self.watch_started = False
+            self.root.ids.main_screen.ids['play_pause_btn'].icon = 'play'
+            Clock.unschedule(self.get_string_time) # Unschedule the get_string_time function
+        self.stopwatch_time = "00:00:00"
+        self.milliseconds = 0
+        self.seconds = 0
+        self.minutes = 0
+        
     def add_msg(self, name, msg):
         if name == 'ChatGPT':
             icon = 'robot-happy-outline'
