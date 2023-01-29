@@ -5,7 +5,7 @@ Interview prep
 ---------------------
 
 ## Chatmate logo
-![Logo](logo/chatmate logo.png)
+![Logo](/logo/chatmate logo.png)
 
 Description!
 
