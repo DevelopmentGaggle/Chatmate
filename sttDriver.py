@@ -5,7 +5,6 @@ import queue
 import os
 import application.app as app
 from io import BytesIO
-from playsound import playsound
 from gtts import gTTS
 from threading import Thread
 from pydub import AudioSegment

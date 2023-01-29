@@ -11,7 +11,7 @@ from kivy.properties import NumericProperty, StringProperty
 from datetime import timedelta
 from kivy.clock import Clock
 
-prompt = 'What type of interview would you like to prepare for?'
+prompt = 'Welcome!'
 CGPT = 'ChatGPT'
 response_q = queue.Queue()
 isTalking = False
@@ -57,7 +57,6 @@ class MainApp(MDApp):
             file = open("./storage/transcript.txt", 'w')
             file.write(CGPT + ': ' + prompt)
             self.add_msg(CGPT, prompt)
-            self.add_msg(name, 'temp')
         self.stopwatch_time = "00:00:00"
         self.start_or_stop_stopwatch()
 
